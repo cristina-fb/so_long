@@ -6,7 +6,7 @@
 #    By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/02 09:35:52 by crisfern          #+#    #+#              #
-#    Updated: 2021/10/18 13:11:28 by crisfern         ###   ########.fr        #
+#    Updated: 2021/10/20 10:11:46 by crisfern         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ make_libft:
 	make all -C ./libft
 
 $(NAME): $(HEADER) $(OBJ) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $< -c

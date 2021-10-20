@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 18:21:26 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/18 15:35:17 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/20 12:15:03 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	**read_map(char *file, t_map map_size)
 	int		i;
 	
 	i = 0;
-	map = ft_calloc(map_size.y, sizeof(char *));
+	map = ft_calloc(map_size.y + 1, sizeof(char *));
 	if (map)
 	{
 		fd = open(file, O_RDONLY);
@@ -68,8 +68,8 @@ char	**read_map(char *file, t_map map_size)
 		{
 			while (i < map_size.y)
 				map[i++] = get_next_line(fd);
-			close(fd);
 			map[i] = 0;
+			close(fd);
 			return (map);
 		}
 		else
@@ -82,8 +82,14 @@ int	is_valid_map(char **map, t_map map_size)
 {
 	int	i;
 	int	j;
+	int	pos;
+	int	col;
+	int	exit;
 
 	i = 0;
+	pos = 0;
+	col = 0;
+	exit = 0;
 	if (map)
 	{
 		while (i < map_size.y)
@@ -91,10 +97,22 @@ int	is_valid_map(char **map, t_map map_size)
 			j = 0;
 			while (j < map_size.x)
 			{
-				
+				if (((i == 0) || (i == map_size.y - 1) || (j == 0) || (j == map_size.x - 1)) && (map[i][j] != '1'))
+					return (0);
+				else if (map[i][j] == 'C')
+					col++;
+				else if (map[i][j] == 'E')
+					exit++;
+				else if (map[i][j] == 'P')
+					pos++;
+				j++;
 			}
+			i++;
 		}
+		if ((col > 0) && (exit > 0) && (pos > 0))
+			return (1);
 	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -110,10 +128,10 @@ int	main(int argc, char **argv)
 		map = read_map(argv[1], map_size);
 		if (!is_valid_map(map, map_size))
 			error(2);
-		else
+		/*else
 		{
 			//Juego
-		}
+		}*/
 	}
 	return (0);
 }
