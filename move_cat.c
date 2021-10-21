@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 12:47:11 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/21 13:46:10 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/21 16:06:47 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,18 @@
 
 static void	move_up(t_program *mlx)
 {
-	if (mlx->map[mlx->y - 1][mlx->x] != '1')
+	if ((mlx->map[mlx->y - 1][mlx->x] == 'E') && (mlx->obj == 0))
 	{
+		destroy_mlx(mlx);
+		exit(0);
+	}
+	else if ((mlx->map[mlx->y - 1][mlx->x] != '1') && (mlx->map[mlx->y - 1][mlx->x] != 'E'))
+	{
+		if (mlx->map[mlx->y - 1][mlx->x] == 'C')
+		{
+			mlx->obj--;
+			mlx->map[mlx->y - 1][mlx->x] = '0';
+		}
 		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water,
 			32 * mlx->x, 32 * mlx->y);
 		mlx->y--;
@@ -30,8 +40,18 @@ static void	move_up(t_program *mlx)
 
 static void	move_down(t_program *mlx)
 {
-	if (mlx->map[mlx->y + 1][mlx->x] != '1')
+	if ((mlx->map[mlx->y + 1][mlx->x] == 'E') && (mlx->obj == 0))
 	{
+		destroy_mlx(mlx);
+		exit(0);
+	}
+	else if ((mlx->map[mlx->y + 1][mlx->x] != '1') && (mlx->map[mlx->y + 1][mlx->x] != 'E'))
+	{
+		if (mlx->map[mlx->y + 1][mlx->x] == 'C')
+		{
+			mlx->obj--;
+			mlx->map[mlx->y + 1][mlx->x] = '0';
+		}
 		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water,
 			32 * mlx->x, 32 * mlx->y);
 		mlx->y++;
@@ -46,8 +66,18 @@ static void	move_down(t_program *mlx)
 
 static void	move_left(t_program *mlx)
 {
-	if (mlx->map[mlx->y][mlx->x - 1] != '1')
+	if ((mlx->map[mlx->y][mlx->x - 1] == 'E') && (mlx->obj == 0))
 	{
+		destroy_mlx(mlx);
+		exit(0);
+	}
+	else if ((mlx->map[mlx->y][mlx->x - 1] != '1') && (mlx->map[mlx->y][mlx->x - 1] != 'E'))
+	{
+		if (mlx->map[mlx->y][mlx->x - 1] == 'C')
+		{
+			mlx->obj--;
+			mlx->map[mlx->y][mlx->x - 1] = '0';
+		}
 		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water,
 			32 * mlx->x, 32 * mlx->y);
 		mlx->x--;
@@ -62,8 +92,18 @@ static void	move_left(t_program *mlx)
 
 static void	move_right(t_program *mlx)
 {
-	if (mlx->map[mlx->y][mlx->x + 1] != '1')
+	if ((mlx->map[mlx->y][mlx->x + 1] == 'E') && (mlx->obj == 0))
 	{
+		destroy_mlx(mlx);
+		exit(0);
+	}
+	if ((mlx->map[mlx->y][mlx->x + 1] != '1') && (mlx->map[mlx->y][mlx->x + 1] != 'E'))
+	{
+		if (mlx->map[mlx->y][mlx->x + 1] == 'C')
+		{
+			mlx->obj--;
+			mlx->map[mlx->y][mlx->x + 1] = '0';
+		}
 		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water,
 			32 * mlx->x, 32 * mlx->y);
 		mlx->x++;
@@ -78,6 +118,7 @@ static void	move_right(t_program *mlx)
 
 int	key_hook(int keycode, t_program *mlx)
 {
+	printf("%d\n", mlx->obj);
 	if (keycode == 0)
 		move_left(mlx);
 	else if (keycode == 1)

@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 18:19:54 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/21 13:36:53 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/21 15:46:33 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ typedef struct s_program
 	void	*wdw;
 	void	*grass;
 	void	*water;
+	void	*mush;
+	void	*hole;
 	void	*cat_f[2];
 	void	*cat_b[2];
 	void	*cat_l[2];
@@ -34,6 +36,7 @@ typedef struct s_program
 	int		cat_mov;
 	int		x;
 	int		y;
+	int		obj;
 	char	**map;
 }	t_program;
 
@@ -44,12 +47,17 @@ typedef struct s_map
 }	t_map;
 
 void	error(int i);
-void	get_map_size(char *file, t_map *map_size);
-void    init_game(t_map map_size, char **map);
-void    destroy_mlx(t_program *mlx);
+void	get_map_size(char *file, t_map *size);
+void	init_game(t_map size, char **map);
+void	destroy_mlx(t_program *mlx);
+void	create_images(t_program *mlx);
+void	destroy_mlx(t_program *mlx);
+void	print_map(t_program *mlx, t_map size);
+void	init_game(t_map size, char **map);
 
-int		is_valid_map(char **map, t_map map_size);
+int		is_valid_map(char **map, t_map size);
 int		key_hook(int keycode, t_program *mlx);
+int		mouse_hook(t_program *mlx);
 
-char	**read_map(char *file, t_map map_size);
+char	**read_map(char *file, t_map size);
 #endif

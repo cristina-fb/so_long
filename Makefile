@@ -6,13 +6,13 @@
 #    By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/02 09:35:52 by crisfern          #+#    #+#              #
-#    Updated: 2021/10/21 13:04:45 by crisfern         ###   ########.fr        #
+#    Updated: 2021/10/21 15:22:57 by crisfern         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 NAME = so_long
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror 
 MLX_FLAGS = -lmlx -framework OpenGL -framework AppKit
 HEADER = so_long.h
 SRC = so_long.c \

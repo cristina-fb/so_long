@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 18:21:26 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/21 10:43:24 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/21 14:43:13 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,22 @@ void	error(int i)
 
 int	main(int argc, char **argv)
 {
-	t_map	map_size;
+	t_map	size;
 	char	**map;
 
 	if (argc != 2)
 		error(0);
 	else
 	{
-		get_map_size(argv[1], &map_size);
-		if ((map_size.x * 32 > MAX_WIDTH) || (map_size.x * 32 > MAX_WIDTH))
+		get_map_size(argv[1], &size);
+		if ((size.x * 32 > MAX_WIDTH) || (size.x * 32 > MAX_WIDTH))
 			error(3);
-		map = read_map(argv[1], map_size);
-		if (!is_valid_map(map, map_size))
+		map = read_map(argv[1], size);
+		if (!is_valid_map(map, size))
 			error(2);
 		else
 		{
-			init_game(map_size, map);
+			init_game(size, map);
 		}
 	}
 	return (0);
