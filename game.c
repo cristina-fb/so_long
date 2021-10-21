@@ -6,27 +6,88 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 12:47:11 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/20 15:02:53 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/21 13:53:25 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void    init_game(t_map map_size, char **map)
+void	create_images(t_program *mlx)
 {
-    t_program   mlx;
-    int     width;
-    int     height;
-    int a;
+	int	w;
+	int	h;
 
-    mlx.ptr = mlx_init();
-    mlx.wdw = mlx_new_window(mlx.ptr, 32*map_size.x, 32*map_size.y, "so_long");
+	mlx->grass = mlx_xpm_file_to_image(mlx->ptr, "./spr/grass.xpm", &w, &h);
+	mlx->water = mlx_xpm_file_to_image(mlx->ptr, "./spr/water.xpm", &w, &h);
+	mlx->cat_f[0] = mlx_xpm_file_to_image(mlx->ptr, "./spr/gfr.xpm", &w, &h);
+	mlx->cat_f[1] = mlx_xpm_file_to_image(mlx->ptr, "./spr/gfl.xpm", &w, &h);
+	mlx->cat_b[0] = mlx_xpm_file_to_image(mlx->ptr, "./spr/gbr.xpm", &w, &h);
+	mlx->cat_b[1] = mlx_xpm_file_to_image(mlx->ptr, "./spr/gbl.xpm", &w, &h);
+	mlx->cat_l[0] = mlx_xpm_file_to_image(mlx->ptr, "./spr/glr.xpm", &w, &h);
+	mlx->cat_l[1] = mlx_xpm_file_to_image(mlx->ptr, "./spr/gll.xpm", &w, &h);
+	mlx->cat_r[0] = mlx_xpm_file_to_image(mlx->ptr, "./spr/grr.xpm", &w, &h);
+	mlx->cat_r[1] = mlx_xpm_file_to_image(mlx->ptr, "./spr/grl.xpm", &w, &h);
+}
 
-    mlx.img = mlx_xpm_file_to_image(mlx.ptr, "./sprites/front_right.xpm", &width, &height);
-    mlx_put_image_to_window(mlx.ptr, mlx.wdw, mlx.img, 0, 0);
+void	destroy_mlx(t_program *mlx)
+{
+	mlx_destroy_window(mlx->ptr, mlx->wdw);
+	mlx_destroy_image(mlx->ptr, mlx->grass);
+	mlx_destroy_image(mlx->ptr, mlx->cat_f[0]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_f[1]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_b[0]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_b[1]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_l[0]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_l[1]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_r[0]);
+	mlx_destroy_image(mlx->ptr, mlx->cat_r[1]);
+}
 
-    //mlx_hook(mlx.wdw, 17, 1L<<1, mouse_hook, &mlx);
-    //mlx_key_hook(mlx.wdw, key_hook, &mlx);
-    mlx_loop(mlx.ptr);
-    a = map[0][0];
+void	print_map(t_program *mlx, t_map map_size)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < map_size.y)
+	{
+		j = 0;
+		while (j < map_size.x)
+		{
+			if (mlx->map[i][j] == '1')
+				mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->grass, 32 * j, 32 * i);
+            else
+				mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water, 32 * j, 32 * i);
+                if (mlx->map[i][j] == 'P')
+                {
+                    mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->cat_f[1], 32 * j, 32 * i);
+                    mlx->x = j;
+                    mlx->y = i;
+                }
+			j++;
+		}
+		i++;
+	}
+}
+
+int mouse_hook(t_program *mlx)
+{
+    destroy_mlx(mlx);
+    exit(0);
+    return (0);
+}
+
+void	init_game(t_map map_size, char **map)
+{
+	t_program	mlx;
+
+    mlx.map = map;
+    mlx.cat_mov = 0;
+	mlx.ptr = mlx_init();
+	mlx.wdw = mlx_new_window(mlx.ptr, 32 * map_size.x, 32 * map_size.y, "so_long");
+	create_images(&mlx);
+	print_map(&mlx, map_size);
+	mlx_hook(mlx.wdw, 17, 1L << 1, mouse_hook, &mlx);
+	mlx_key_hook(mlx.wdw, key_hook, &mlx);
+	mlx_loop(mlx.ptr);
 }
