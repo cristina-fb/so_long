@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 12:47:11 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/21 15:47:05 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/22 16:48:46 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,30 @@ void	create_images(t_program *mlx)
 	mlx->hole = mlx_xpm_file_to_image(mlx->ptr, "./spr/hole.xpm", &w, &h);
 }
 
-void	destroy_mlx(t_program *mlx)
+static void	print_map_aux(t_program *mlx, int i, int j)
 {
-	mlx_destroy_window(mlx->ptr, mlx->wdw);
-	mlx_destroy_image(mlx->ptr, mlx->grass);
-	mlx_destroy_image(mlx->ptr, mlx->cat_f[0]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_f[1]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_b[0]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_b[1]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_l[0]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_l[1]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_r[0]);
-	mlx_destroy_image(mlx->ptr, mlx->cat_r[1]);
+	if (mlx->map[i][j] == '1')
+		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->grass, 64 * j, 64 * i);
+	else
+	{
+		mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water, 64 * j, 64 * i);
+		if (mlx->map[i][j] == 'P')
+		{
+			mlx_put_image_to_window(mlx->ptr, mlx->wdw,
+				mlx->cat_f[1], 64 * j, 64 * i);
+			mlx->x = j;
+			mlx->y = i;
+		}
+		if (mlx->map[i][j] == 'C')
+		{
+			mlx_put_image_to_window(mlx->ptr, mlx->wdw,
+				mlx->mush, 64 * j, 64 * i);
+			mlx->obj++;
+		}
+		if (mlx->map[i][j] == 'E')
+			mlx_put_image_to_window(mlx->ptr, mlx->wdw,
+				mlx->hole, 64 * j, 64 * i);
+	}
 }
 
 void	print_map(t_program *mlx, t_map size)
@@ -56,50 +68,23 @@ void	print_map(t_program *mlx, t_map size)
 		j = 0;
 		while (j < size.x)
 		{
-			if (mlx->map[i][j] == '1')
-				mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->grass, 32 * j, 32 * i);
-			else
-			{
-				mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->water, 32 * j, 32 * i);
-				if (mlx->map[i][j] == 'P')
-				{
-					mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->cat_f[1], 32 * j, 32 * i);
-					mlx->x = j;
-					mlx->y = i;
-				}
-				if (mlx->map[i][j] == 'C')
-				{
-					mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->mush, 32 * j, 32 * i);
-					mlx->obj++;
-				}
-				if (mlx->map[i][j] == 'E')
-					mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->hole, 32 * j, 32 * i);
-			}
+			print_map_aux(mlx, i, j);
 			j++;
 		}
 		i++;
 	}
 }
 
-int	mouse_hook(t_program *mlx)
+void	print_mov(t_program *mlx)
 {
-	destroy_mlx(mlx);
-	exit(0);
-	return (0);
-}
-
-void	init_game(t_map size, char **map)
-{
-	t_program	mlx;
-
-	mlx.map = map;
-	mlx.cat_mov = 0;
-	mlx.obj = 0;
-	mlx.ptr = mlx_init();
-	mlx.wdw = mlx_new_window(mlx.ptr, 32 * size.x, 32 * size.y, "so_long");
-	create_images(&mlx);
-	print_map(&mlx, size);
-	mlx_hook(mlx.wdw, 17, 1L << 1, mouse_hook, &mlx);
-	mlx_key_hook(mlx.wdw, key_hook, &mlx);
-	mlx_loop(mlx.ptr);
+	char	*num;
+	
+	mlx->n_mov++;
+	num = ft_itoa(mlx->n_mov);
+	mlx_put_image_to_window(mlx->ptr, mlx->wdw, mlx->grass, 256, 0);
+	mlx_string_put(mlx->ptr, mlx->wdw, 260, 32, 0, num);
+	free(num);
+	write(1, "Number of movements: ", 21);
+	ft_putnbr(mlx->n_mov);
+	write(1, "\n", 1);
 }
