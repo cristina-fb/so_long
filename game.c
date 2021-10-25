@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 12:47:11 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/22 16:48:46 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:25:37 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,34 +45,40 @@ static void	print_map_aux(t_program *mlx, int i, int j)
 			mlx->x = j;
 			mlx->y = i;
 		}
-		if (mlx->map[i][j] == 'C')
+		else if (mlx->map[i][j] == 'C')
 		{
 			mlx_put_image_to_window(mlx->ptr, mlx->wdw,
 				mlx->mush, 64 * j, 64 * i);
 			mlx->obj++;
 		}
-		if (mlx->map[i][j] == 'E')
+		else if (mlx->map[i][j] == 'E')
 			mlx_put_image_to_window(mlx->ptr, mlx->wdw,
 				mlx->hole, 64 * j, 64 * i);
 	}
 }
 
-void	print_map(t_program *mlx, t_map size)
+void	print_map(t_program *mlx, t_map *map)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < size.y)
+	while (i < map->y)
 	{
 		j = 0;
-		while (j < size.x)
+		while (j < map->x)
 		{
 			print_map_aux(mlx, i, j);
 			j++;
 		}
 		i++;
 	}
+}
+
+int	mouse_hook(t_program *mlx)
+{
+	end_game(mlx);
+	return (0);
 }
 
 void	print_mov(t_program *mlx)

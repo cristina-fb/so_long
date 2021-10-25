@@ -6,7 +6,7 @@
 #    By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/02 09:35:52 by crisfern          #+#    #+#              #
-#    Updated: 2021/10/22 16:47:17 by crisfern         ###   ########.fr        #
+#    Updated: 2021/10/25 16:26:46 by crisfern         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,6 @@ SRC = so_long.c \
 		map_validation.c \
 		move_cat.c \
 		game.c \
-		game_destroy.c \
 		utils.c
 LIBFT = ./libft/libft.a
 MLX = ./mlx/libmlx.a

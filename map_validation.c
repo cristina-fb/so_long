@@ -6,13 +6,13 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 12:47:11 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/22 10:23:59 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:07:21 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	get_map_size(char *file, t_map *size)
+void	get_map_size(char *file, t_map *map)
 {
 	int		fd;
 	int		i;
@@ -36,67 +36,52 @@ void	get_map_size(char *file, t_map *size)
 		line = get_next_line(fd);
 	}
 	close(fd);
-	size->x = len;
-	size->y = i;
+	map->x = len;
+	map->y = i;
 }
 
-char	**read_map(char *file, t_map size)
+char	**read_map(char *file, t_map *map)
 {
-	char	**map;
+	char	**line;
 	int		fd;
 	int		i;
 
 	i = 0;
-	map = ft_calloc(size.y + 1, sizeof(char *));
-	if (map)
+	line = ft_calloc(map->y + 1, sizeof(char *));
+	if (line)
 	{
 		fd = open(file, O_RDONLY);
 		if (fd < 0)
 			error(1);
-		while (i < size.y)
-			map[i++] = get_next_line(fd);
-		map[i] = 0;
+		while (i < map->y)
+			line[i++] = get_next_line(fd);
 		close(fd);
-		return (map);
+		return (line);
 	}
 	return (0);
 }
 
-static void	are_map_elements(char a, int *pos, int *col, int *exit)
-{
-	if (a == 'C')
-		*col += 1;
-	else if (a == 'E')
-		*exit += 1;
-	else if (a == 'P')
-		*pos += 1;
-}
-
-int	is_valid_map(char **map, t_map size)
+int	is_valid_map(t_program *mlx, t_map *map)
 {
 	int	i;
 	int	j;
-	int	pos;
-	int	col;
-	int	exit;
 
 	i = -1;
-	pos = 0;
-	col = 0;
-	exit = 0;
-	if (map)
+	while (++i < map->y)
 	{
-		while (++i < size.y)
+		j = -1;
+		while (++j < map->x)
 		{
-			j = -1;
-			while (++j < size.x)
-			{
-				if (((i == 0) || (i == size.y - 1) || (j == 0)
-						|| (j == size.x - 1)) && (map[i][j] != '1'))
-					return (0);
-				are_map_elements(map[i][j], &pos, &col, &exit);
-			}
+			if (((i == 0) || (i == map->y - 1) || (j == 0)
+					|| (j == map->x - 1)) && (mlx->map[i][j] != '1'))
+				return (0);
+			else if (mlx->map[i][j] == 'C')
+				map->col++;
+			else if (mlx->map[i][j] == 'E')
+				map->exit++;
+			else if (mlx->map[i][j] == 'P')
+				map->pos++;
 		}
 	}
-	return ((col > 0) & (exit > 0) & (pos > 0));
+	return ((map->col > 0) & (map->exit > 0) & (map->pos > 0));
 }

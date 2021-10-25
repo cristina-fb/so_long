@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 18:21:26 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/22 16:42:31 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/25 16:08:56 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,43 +31,71 @@ void	error(int i)
 	exit(0);
 }
 
-void	init_game(t_map size, char **map)
+static void	init_struct_map(t_map *map)
 {
-	t_program	mlx;
+	map->x = 0;
+	map->y = 0;
+	map->pos = 0;
+	map->col = 0;
+	map->exit = 0;
+}
 
-	mlx.map = map;
-	mlx.cat_mov = 0;
-	mlx.obj = 0;
-	mlx.n_mov = 0;
-	mlx.ptr = mlx_init();
-	mlx.wdw = mlx_new_window(mlx.ptr, 64 * size.x, 64 * size.y, "so_long");
-	create_images(&mlx);
-	print_map(&mlx, size);
-	mlx_hook(mlx.wdw, 17, 1L << 1, mouse_hook, &mlx);
-	mlx_key_hook(mlx.wdw, key_hook, &mlx);
-	mlx_string_put(mlx.ptr, mlx.wdw, 64, 32, 0, "Number of movements:");
-	mlx_loop(mlx.ptr);
+static void	init_struct_prog(t_program *mlx)
+{
+	mlx->ptr = NULL;
+	mlx->wdw = NULL;
+	mlx->grass = NULL;
+	mlx->water = NULL;
+	mlx->mush = NULL;
+	mlx->hole = NULL;
+	mlx->cat_f[0] = NULL;
+	mlx->cat_f[1] = NULL;
+	mlx->cat_b[0] = NULL;
+	mlx->cat_b[1] = NULL;
+	mlx->cat_l[0] = NULL;
+	mlx->cat_l[1] = NULL;
+	mlx->cat_r[0] = NULL;
+	mlx->cat_r[1] = NULL;
+	mlx->cat_mov = 0;
+	mlx->x = 0;
+	mlx->y = 0;
+	mlx->obj = 0;
+	mlx->n_mov = 0;
+	mlx->map = NULL;
+}
+
+static void	init_game(t_map *map, t_program *mlx)
+{
+	mlx->ptr = mlx_init();
+	mlx->wdw = mlx_new_window(mlx->ptr, 64 * map->x, 64 * map->y, "so_long");
+	create_images(mlx);
+	print_map(mlx, map);
+	mlx_hook(mlx->wdw, 17, 1L << 1, mouse_hook, mlx);
+	mlx_key_hook(mlx->wdw, key_hook, mlx);
+	mlx_string_put(mlx->ptr, mlx->wdw, 64, 32, 0, "Number of movements:");
+	mlx_loop(mlx->ptr);
 }
 
 int	main(int argc, char **argv)
 {
-	t_map	size;
-	char	**map;
+	t_map		map;
+	t_program	mlx;
 
 	atexit(leaks);
 	if (argc != 2)
 		error(0);
 	else
 	{
-		get_map_size(argv[1], &size);
-		if ((size.x * 64 > MAX_WIDTH) || (size.x * 64 > MAX_WIDTH))
-			error(3);
-		map = read_map(argv[1], size);
-		if (!is_valid_map(map, size))
-			error(2);
-		else
+		init_struct_map(&map);
+		init_struct_prog(&mlx);
+		get_map_size(argv[1], &map);
+		mlx.map = read_map(argv[1], &map);
+		if (mlx.map)
 		{
-			init_game(size, map);
+			if (!is_valid_map(&mlx, &map))
+				error(2);
+			else
+				init_game(&map, &mlx);
 		}
 	}
 	return (0);
