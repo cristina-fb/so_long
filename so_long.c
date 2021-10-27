@@ -6,7 +6,7 @@
 /*   By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 18:21:26 by crisfern          #+#    #+#             */
-/*   Updated: 2021/10/25 16:08:56 by crisfern         ###   ########.fr       */
+/*   Updated: 2021/10/27 10:42:04 by crisfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,19 @@ void	leaks(void)
 void	error(int i)
 {
 	if (i == 0)
-		write(1, "Error\nNumber of arguments not valid", 35);
+		write(1, "Error\nNo argument for map", 25);
 	else if (i == 1)
-		write(1, "Error\nCan't open map file", 25);
+		write(1, "Error\nToo many arguments", 24);
 	else if (i == 2)
-		write(1, "Error\nMap not valid", 19);
+		write(1, "Error\nCan't open file", 21);
 	else if (i == 3)
-		write(1, "Error\nMap size too big", 22);
+		write(1, "Error\nMap not rectangular", 25);
+	else if (i == 4)
+		write(1, "Error\nMap not valid", 19);
+	else if (i == 5)
+		write(1, "Error\nExtension not valid", 25);
+	else if (i == 6)
+		write(1, "Error\nCouldn't read map", 23);
 	write(1, "\n", 1);
 	exit(0);
 }
@@ -64,16 +70,26 @@ static void	init_struct_prog(t_program *mlx)
 	mlx->map = NULL;
 }
 
-static void	init_game(t_map *map, t_program *mlx)
+static int	check_extension(char *str)
 {
-	mlx->ptr = mlx_init();
-	mlx->wdw = mlx_new_window(mlx->ptr, 64 * map->x, 64 * map->y, "so_long");
-	create_images(mlx);
-	print_map(mlx, map);
-	mlx_hook(mlx->wdw, 17, 1L << 1, mouse_hook, mlx);
-	mlx_key_hook(mlx->wdw, key_hook, mlx);
-	mlx_string_put(mlx->ptr, mlx->wdw, 64, 32, 0, "Number of movements:");
-	mlx_loop(mlx->ptr);
+	char	*aux;
+
+	aux = str;
+	if (aux)
+	{
+		while (*aux)
+		{
+			if ((*aux == '.') && (*(aux + 1)))
+			{
+				if ((*(aux + 1) == 'b') && (*(aux + 2)))
+					if ((*(aux + 2) == 'e') && (*(aux + 3)))
+						if ((*(aux + 3) == 'r') && !(*(aux + 4)))
+							return (1);
+			}
+			aux++;
+		}
+	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -82,21 +98,24 @@ int	main(int argc, char **argv)
 	t_program	mlx;
 
 	atexit(leaks);
-	if (argc != 2)
+	if (argc < 2)
 		error(0);
-	else
+	else if (argc > 2)
+		error(1);
+	else if (!check_extension(argv[1]))
+		error(5);
+	init_struct_map(&map);
+	init_struct_prog(&mlx);
+	get_map_size(argv[1], &map);
+	mlx.map = read_map(argv[1], &map);
+	if (mlx.map)
 	{
-		init_struct_map(&map);
-		init_struct_prog(&mlx);
-		get_map_size(argv[1], &map);
-		mlx.map = read_map(argv[1], &map);
-		if (mlx.map)
-		{
-			if (!is_valid_map(&mlx, &map))
-				error(2);
-			else
-				init_game(&map, &mlx);
-		}
+		if (!is_valid_map(&mlx, &map))
+			error(4);
+		else
+			init_game(&map, &mlx);
 	}
+	else
+		error(6);
 	return (0);
 }

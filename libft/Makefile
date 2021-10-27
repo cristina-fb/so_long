@@ -6,13 +6,14 @@
 #    By: crisfern <crisfern@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/06/02 09:35:52 by crisfern          #+#    #+#              #
-#    Updated: 2021/10/20 09:52:34 by crisfern         ###   ########.fr        #
+#    Updated: 2021/10/27 11:08:15 by crisfern         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC = gcc
 NAME = libft.a
 FLAGS = -Wall -Wextra -Werror
+HEADER = ./libft.h
 SRC = ft_memset.c \
 		ft_bzero.c \
 		ft_memcpy.c \
@@ -64,7 +65,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	ar -r $(NAME) $(OBJ)
 
-$(OBJ):
+$(OBJ): $(HEADER)
 	$(CC) $(FLAGS) -c $(SRC)
 
 clean:
